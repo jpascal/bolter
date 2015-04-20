@@ -36,8 +36,8 @@ View:
 .search
     = form_tag books_path, method: :get, id: :search do
         = fields_for :filters, OpenStruct.new(params[:filters]) do |f|
-            = f.label :with_name, EventTarget.human_attribute_name(:name)
-            = f.text_field :with_name, :class => 'form-control'
+            = f.label :with_name, Book.human_attribute_name(:name)
+            = f.text_field :with_name
 .index
     %table
         %tr
