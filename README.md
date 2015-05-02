@@ -34,10 +34,10 @@ end
 View:
 ```haml
 .search
-    = form_tag books_path, method: :get, id: :search do
-        = fields_for :filters, OpenStruct.new(params[:filters]) do |f|
-            = f.label :with_name, Book.human_attribute_name(:name)
-            = f.text_field :with_name
+    = search_form books_path, id: :search do |f|
+      = f.label :with_name, Book.human_attribute_name(:name)
+      = f.text_field :with_name
+      = f.submit 'Search'
 .index
     %table
         %tr

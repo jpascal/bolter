@@ -10,10 +10,23 @@ module Bolter
     end
   end
   module FormHelpers
-    def self.field_for_filters(name, options = {}, &block)
-      record_object = OpenStruct.new(params[name])
-      builder = instantiate_builder(name, record_object, options)
-      silence(builder, &block)
+    def self.search_form(url, options = {}, &block)
+      raise ArgumentError, 'Missing block' unless block_given?
+      namespace = options.fetch(:namespace, :search)
+      object = OpenStruct.new(params[namespace])
+      builder = default_form_builder.new(namespace, object, self, options)
+
+      html_options = options.fetch(:html, {})
+      html_options[:data]   = options.delete(:data)
+      html_options[:remote] = options.fetch(:remote, false)
+      html_options[:method] = options.fetch(:method, :get)
+      html_options[:enforce_utf8] = options.fetch(:enforce_utf8, nil)
+      html_options[:authenticity_token] = options.delete(:authenticity_token)
+      html_options = html_options_for_form(url, html_options)
+
+      output = form_tag_html(html_options)
+      output  << capture(builder, &block)
+      output.safe_concat('</form>')
     end
   end
 end
