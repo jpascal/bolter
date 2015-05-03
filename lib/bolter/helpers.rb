@@ -1,20 +1,21 @@
 module Bolter
-  module UrlHelpers
-    def sort_link(scope_name, text = nil)
-      sorting = params[:sorting] || "#{scope_name}:asc"
+  module SortHelper
+    def sort_link(scope_name, text = nil, options = {})
+      as = options.fetch(:as, :sorting)
+      sorting = params[as] || "#{scope_name}:asc"
       current_field, direction = sorting.split(':', 2).map(&:to_s)
       direction = direction == 'asc' ? 'desc' : 'asc'
       title = text || scope
-      title = title + "#{direction == 'asc' ? '&#9650;' : '&#9660;'}" if scope_name.to_s == current_field and params[:sorting].present?
-      link_to title.html_safe, url_for(params.merge({:sorting => "#{scope_name}:#{direction}"}))
+      title = title + "#{direction == 'asc' ? '&#9650;' : '&#9660;'}" if scope_name.to_s == current_field and params[as].present?
+      link_to title.html_safe, url_for(params.merge(Hash[as, "#{scope_name}:#{direction}"]))
     end
   end
-  module FormHelpers
-    def self.search_form(url, options = {}, &block)
+  module FormHelper
+    def search_form(url, options = {}, &block)
       raise ArgumentError, 'Missing block' unless block_given?
-      namespace = options.fetch(:namespace, :search)
-      object = OpenStruct.new(params[namespace])
-      builder = default_form_builder.new(namespace, object, self, options)
+      as = options.fetch(:as, :search)
+      object = OpenStruct.new(params[as])
+      builder = default_form_builder.new(as, object, self, options)
 
       html_options = options.fetch(:html, {})
       html_options[:data]   = options.delete(:data)
