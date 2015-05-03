@@ -1,23 +1,28 @@
 require 'spec_helper'
-require 'active_record'
+require 'mongoid'
 require 'bolter/searchable'
 require 'bolter/sortable'
 
-describe ActiveRecord do
+describe Mongoid do
   before(:all) do
-    ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
-    # ActiveRecord::Base.logger = Logger.new STDOUT
-    ActiveRecord::Migration.create_table :items do |t|
-      t.string :name
-      t.integer :value
-    end
-    class Item < ActiveRecord::Base
+    Mongoid.load!('./spec/config/mongoid.yml', :development)
+    Mongoid.purge!
+    class Item
+      include Mongoid::Document
       include Bolter::Searchable
       include Bolter::Sortable
-      filter :with_value, ->(value) {
-        where(value: value)
+
+      field :name, type: String
+      field :value, type: Integer
+
+      filter :search_value, ->(value) {
+        if value.is_a? Array
+          self.in({value: value})
+        else
+          where(value: value)
+        end
       }
-      filter :with_name, ->(name) {
+      filter :search_name, ->(name) {
         where(name: name)
       }
     end
@@ -28,18 +33,17 @@ describe ActiveRecord do
     ]);
   end
   it 'filter with value 4' do
-    expect(Item.search({with_value: 4}).count).to eq(0)
+    expect(Item.search({search_value: 4}).count).to eq(0)
   end
   it 'filter with value [1]' do
-    expect(Item.search({with_value: [1]}).count).to eq(1)
+    expect(Item.search({search_value: [1]}).count).to eq(1)
   end
   it 'filter with value [1,2]' do
-    expect(Item.search({with_value: [1,2]}).count).to eq(2)
+    expect(Item.search({search_value: [1,2]}).count).to eq(2)
   end
   it 'filter with value [1,2] and name "test1"' do
-    expect(Item.search({with_value: [1,2], with_name: 'test1'}).count).to eq(0)
+    expect(Item.search({search_value: [1,2], search_name: 'test1'}).count).to eq(0)
   end
-
   it 'sort by name asc' do
     result = Item.sorting('name:asc')
     expect(result.first.name).to eq('test1')
@@ -53,15 +57,14 @@ describe ActiveRecord do
   end
 
   it 'sort by name desc and filter value [1,3]' do
-    result = Item.sorting('name:desc').search({with_value: [1,2]})
+    result = Item.sorting('name:desc').search({search_value: [1,2]})
     expect(result.first.name).to eq('test3')
     expect(result.last.name).to eq('test2')
   end
 
   it 'filter value [1,3] and sort by name asc' do
-    result = Item.search({with_value: [1,2]}).sorting('name:asc')
+    result = Item.search({search_value: [1,2]}).sorting('name:asc')
     expect(result.first.name).to eq('test2')
     expect(result.last.name).to eq('test3')
   end
-
 end
