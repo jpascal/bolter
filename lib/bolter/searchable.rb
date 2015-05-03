@@ -24,8 +24,6 @@ module Bolter
         search.each do |name, value|
           if enabled_filters.include?(name.to_s)
             result = result.send(name.to_s, value)
-          else
-            logger.warn "Unknown filter #{self}.#{name}(#{value.inspect})"
           end
         end
         result
