@@ -15,7 +15,7 @@ module Bolter
       raise ArgumentError, 'Missing block' unless block_given?
       as = options.fetch(:as, :search)
       object = OpenStruct.new(params[as])
-      builder = default_form_builder.new(as, object, self, options)
+      builder = ActionView::Base.default_form_builder.new(as, object, self, options)
 
       html_options = options.fetch(:html, {})
       html_options[:data]   = options.delete(:data)
