@@ -15,14 +15,14 @@ describe Mongoid do
       field :name, type: String
       field :value, type: Integer
 
-      filter :search_value, ->(value) {
+      scope :search_value, ->(value) {
         if value.is_a? Array
           self.in({value: value})
         else
           where(value: value)
         end
       }
-      filter :search_name, ->(name) {
+      scope :search_name, ->(name) {
         where(name: name)
       }
     end

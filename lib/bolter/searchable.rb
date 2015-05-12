@@ -2,29 +2,14 @@ module Bolter
   module Searchable
     extend ActiveSupport::Concern
     included do
-      cattr_reader :filters
-    end
-    class_methods do
-      def filter(name, value, &block)
-        @@filters ||= []
-        @@filters << name.to_s
-        scope name.to_sym, value, &block
-      end
-      def search(params = {}, options = {})
-        # Prepare filters
-        enabled_filters = Array(options[:filters] || self.filters).map(&:to_s)
-
-        # Prepare default result
+      cattr_reader :used_as_filters
+      def self.search(params = {}, options = {})
         result = self
-
         # Prepare params to search
         search = (params || {}).clone.reject{|_,value| value.to_s.empty? }
-
         # Apply filters
         search.each do |name, value|
-          if enabled_filters.include?(name.to_s)
-            result = result.send(name.to_s, value)
-          end
+          result = result.send(name.to_s, value) if result.respond_to? name.to_s
         end
         result
       end

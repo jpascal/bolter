@@ -25,7 +25,10 @@ Or install it yourself as:
 Model:
 ```ruby
 class Book < ActiveRecord::Base 
-  filter :with_author, -> (author) {
+  include Bolter::Searchable
+  include Bolter::Sortable
+
+  scope :with_author, -> (author) {
     self.where("author like ?",author)
   }
 end
@@ -51,8 +54,6 @@ Controller:
 ```ruby
 @books = Book.search(params[:filters]).sorting(params[:sorting])
 ```
-
-
 
 ## Development
 

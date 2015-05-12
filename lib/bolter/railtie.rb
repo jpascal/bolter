@@ -10,18 +10,6 @@ module Bolter
         ActionView::Base.send :include, Bolter::FormHelper
         ActionView::Base.send :include, Bolter::SortHelper
       end
-
-      ActiveSupport.on_load(:active_record) do
-        ActiveRecord::Base.send :include, Bolter::Searchable
-        ActiveRecord::Base.send :include, Bolter::Sortable
-      end
-
-      if defined? ::Mongoid::Document
-        ActiveSupport.on_load(:mongoid) do
-          Mongoid::Document.send :include, Bolter::Searchable
-          Mongoid::Document.send :include, Bolter::Sortable
-        end
-      end
     end
   end
 end

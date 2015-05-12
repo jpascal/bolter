@@ -14,10 +14,10 @@ describe ActiveRecord do
     class Item < ActiveRecord::Base
       include Bolter::Searchable
       include Bolter::Sortable
-      filter :with_value, ->(value) {
+      scope :with_value, ->(value) {
         where(value: value)
       }
-      filter :with_name, ->(name) {
+      scope :with_name, ->(name) {
         where(name: name)
       }
     end
