@@ -27,7 +27,6 @@ Model:
 class Book < ActiveRecord::Base 
   include Bolter::Searchable
   include Bolter::Sortable
-
   scope :with_author, -> (author) {
     self.where("author like ?",author)
   }
@@ -52,8 +51,27 @@ View:
 
 Controller:
 ```ruby
-@books = Book.search(params[:filters]).sorting(params[:sorting])
+class BooksController < ApplicationController
+    def index
+        @books = Book.search(params[:search]).sorting(params[:sorting])
+    end
+end
 ```
+
+Using strong_parameters:
+```ruby
+class BooksController < ApplicationController
+    def index
+        @books = Book.search(search_params).sorting(params[:sorting])
+    end
+private
+    def search_params
+        params.fetch(:search, {}).permit(:with_user)
+    end
+end
+```
+
+
 
 ## Development
 
