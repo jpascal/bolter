@@ -28,7 +28,7 @@ class Book < ActiveRecord::Base
   include Bolter::Searchable
   include Bolter::Sortable
   scope :with_author, -> (author) {
-    self.where("author like ?",author)
+    self.where("UPPER(author) like ?",('%'+author+'%').mb_chars.upcase)
   }
 end
 ```
