@@ -1,6 +1,7 @@
 # Bolter
 
 [![Gem Version](https://badge.fury.io/rb/bolter.svg)](http://badge.fury.io/rb/bolter)
+[![Build Status](https://travis-ci.org/jpascal/bolter.svg?branch=master)](https://travis-ci.org/jpascal/bolter)
 
 This gem allow you create search form and sorting in you views
 
