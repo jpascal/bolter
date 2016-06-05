@@ -4,7 +4,7 @@ module Bolter
     included do
       cattr_reader :used_as_filters
       def self.search(params = {}, options = {})
-        result = self.current_scope
+        result = self.current_scope || self
         # Prepare params to search
         search = (params || {}).clone.reject{|_,value| value.to_s.empty? }
         # Apply filters
