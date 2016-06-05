@@ -7,7 +7,7 @@ module Bolter
         field, direction = sorting.split(':',2)
         if self.attribute_names.include? field.to_s
           if %W[asc desc].include? direction
-            return self.reorder(Hash[field, direction])
+            return self.current_scope.reorder(Hash[field, direction])
           end
         else
           self.order({})
