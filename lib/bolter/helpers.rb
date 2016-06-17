@@ -7,7 +7,7 @@ module Bolter
       direction = direction == 'asc' ? 'desc' : 'asc'
       title = text || scope
       title = title + "#{direction == 'asc' ? '&#9650;' : '&#9660;'}" if scope_name.to_s == current_field and params[as].present?
-      link_to title.html_safe, url_for(params.merge(Hash[as, "#{scope_name}:#{direction}"])), options
+      link_to title.html_safe, url_for(params.permit(:sorting).merge(Hash[as, "#{scope_name}:#{direction}"])), options
     end
   end
   module FormHelper
